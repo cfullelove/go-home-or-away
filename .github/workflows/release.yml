@@ -15,13 +15,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.18'
+          go-version: '1.22'
 
       - name: Build for Linux
-        run: go build -v -o go-home-or-away ./...
+        run: go build -v -o go-home-or-away-linux ./...
 
       - name: Build for Windows
-        run: GOOS=windows GOARCH=amd64 go build -v -o go-home-or-away.exe ./...
+        run: GOOS=windows GOARCH=amd64 go build -v -o go-home-or-away-windows.exe ./...
 
       - name: Create Release
         id: create_release
@@ -36,14 +36,14 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./go-home-or-away
-          asset_name: go-home-or-away
+          asset_path: ./go-home-or-away-linux
+          asset_name: go-home-or-away-linux
           asset_content_type: application/octet-stream
 
       - name: Upload Windows Asset
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./go-home-or-away.exe
-          asset_name: go-home-or-away.exe
+          asset_path: ./go-home-or-away-windows.exe
+          asset_name: go-home-or-away-windows.exe
           asset_content_type: application/octet-stream
