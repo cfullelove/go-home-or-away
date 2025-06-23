@@ -13,28 +13,35 @@ This is useful when you move between a network that has direct access to your se
 
 ## Building
 
-The recommended way to build this application is with Docker to ensure a consistent build environment.
+You can build this application from source if you have a Go environment set up.
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/go-home-or-away.git
+    git clone https://github.com/cfullelove/go-home-or-away.git
     cd go-home-or-away
     ```
 
 2.  **Build the executable**:
-    The following command will build the Windows executable (`go-home-or-away.exe`) in the current directory.
+    To build the executable for your current operating system, run:
     ```bash
-    docker run --rm -v $(pwd):/app -e GOOS=windows -e GOARCH=amd64 -w /app golang go build -o go-home-or-away.exe
+    go build -o go-home-or-away
     ```
-    To build for other operating systems, change the `GOOS` and `GOARCH` environment variables. For example, for Linux, you would use `GOOS=linux` and `GOARCH=amd64`.
+    To build for a specific operating system, use the `GOOS` and `GOARCH` environment variables. For example, to build for Windows:
+    ```bash
+    GOOS=windows GOARCH=amd64 go build -o go-home-or-away.exe
+    ```
+
+Alternatively, you can download pre-compiled binaries for Linux and Windows from the [Releases](https://github.com/cfullelove/go-home-or-away/releases) page.
 
 ## Usage
 
-To use `go-home-or-away`, add it as a `ProxyCommand` in your `~/.ssh/config` file.
+To use `go-home-or-away`, add it as a `ProxyCommand` in your SSH client configuration file.
+
+### Windows
 
 1.  Place the `go-home-or-away.exe` executable in a known location on your machine (e.g., `C:\Users\your-user\bin`).
 
-2.  Edit your `~/.ssh/config` file and add an entry for your host:
+2.  Edit your `%USERPROFILE%\.ssh\config` file and add an entry for your host:
 
     ```
     Host my-remote-machine
@@ -46,6 +53,28 @@ To use `go-home-or-away`, add it as a `ProxyCommand` in your `~/.ssh/config` fil
     ```
 
     Replace `C:\path\to\your\app` with the actual path to the directory containing the executable, and `your-ssh-proxy.example.com` with your actual proxy server.
+
+### Linux
+
+1.  Place the `go-home-or-away` executable in a known location on your machine (e.g., `/usr/local/bin`).
+
+2.  Make sure the executable has execute permissions:
+    ```bash
+    chmod +x /usr/local/bin/go-home-or-away
+    ```
+
+3.  Edit your `~/.ssh/config` file and add an entry for your host:
+
+    ```
+    Host my-remote-machine
+      HostName internal.server.com
+      User your-user
+      # Use the Go app as the proxy command
+      # The %h and %p are automatically replaced by SSH with the HostName and port
+      ProxyCommand /usr/local/bin/go-home-or-away %h %p your-ssh-proxy.example.com
+    ```
+
+    Replace `your-ssh-proxy.example.com` with your actual proxy server.
 
 Now, when you run `ssh my-remote-machine`, `go-home-or-away` will automatically handle the connection for you.
 
